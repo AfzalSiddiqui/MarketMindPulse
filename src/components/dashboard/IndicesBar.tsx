@@ -1,8 +1,32 @@
 "use client";
 
-import { indices } from "@/lib/mockData";
+import { useIndices } from "@/lib/hooks/useIndices";
 
 export default function IndicesBar() {
+  const { indices, isLoading } = useIndices();
+
+  if (isLoading && indices.length === 0) {
+    return (
+      <div className="flex gap-3 overflow-x-auto pb-1">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            className="flex min-w-[180px] flex-1 items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900"
+          >
+            <div className="space-y-2">
+              <div className="h-3 w-16 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
+              <div className="h-5 w-24 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
+            </div>
+            <div className="space-y-2 text-right">
+              <div className="ml-auto h-3.5 w-14 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
+              <div className="ml-auto h-3 w-10 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="flex gap-3 overflow-x-auto pb-1">
       {indices.map((index) => (
