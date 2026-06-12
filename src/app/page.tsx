@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import IndicesBar from "@/components/dashboard/IndicesBar";
 import NiftyChart from "@/components/dashboard/NiftyChart";
 import TopGainers from "@/components/dashboard/TopGainers";
@@ -5,8 +8,24 @@ import TopLosers from "@/components/dashboard/TopLosers";
 import SectorHeatmap from "@/components/dashboard/SectorHeatmap";
 import TrendingStocks from "@/components/dashboard/TrendingStocks";
 import NewsPanel from "@/components/dashboard/NewsPanel";
+import StockTable from "@/components/dashboard/StockTable";
+import StockDetailModal from "@/components/shared/StockDetailModal";
+import { useIndices } from "@/lib/hooks/useIndices";
+import { useTopMovers } from "@/lib/hooks/useTopMovers";
+import { Stock } from "@/lib/types";
+import { getStockChartData } from "@/lib/mockData";
 
 export default function Home() {
+  const { isMarketOpen, marketStatus } = useIndices();
+  const {
+    gainers,
+    losers,
+    trending,
+    isLoading: moversLoading,
+  } = useTopMovers();
+  const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
+  const [activeChart, setActiveChart] = useState<"NIFTY" | "SENSEX">("NIFTY");
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
       <div className="mb-6 flex items-center justify-between">
@@ -18,34 +37,115 @@ export default function Home() {
             Indian Market Overview
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-1.5 dark:bg-emerald-950">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-          <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">
-            Market Open
+        <div
+          className={`flex items-center gap-2 rounded-lg px-3 py-1.5 ${
+            marketStatus === "open"
+              ? "bg-emerald-50 dark:bg-emerald-950"
+              : marketStatus === "holiday"
+                ? "bg-amber-50 dark:bg-amber-950"
+                : "bg-zinc-100 dark:bg-zinc-800"
+          }`}
+        >
+          <span
+            className={`h-2.5 w-2.5 rounded-full ${
+              marketStatus === "open"
+                ? "animate-pulse bg-emerald-500"
+                : marketStatus === "holiday"
+                  ? "bg-amber-500"
+                  : "bg-zinc-400"
+            }`}
+          />
+          <span
+            className={`text-sm font-bold ${
+              marketStatus === "open"
+                ? "text-emerald-700 dark:text-emerald-400"
+                : marketStatus === "holiday"
+                  ? "text-amber-700 dark:text-amber-400"
+                  : "text-zinc-600 dark:text-zinc-400"
+            }`}
+          >
+            {marketStatus === "open"
+              ? "Market Open"
+              : marketStatus === "holiday"
+                ? "Market Holiday"
+                : "Market Closed"}
           </span>
         </div>
       </div>
 
       <IndicesBar />
 
+      {/* Chart section with NIFTY/SENSEX toggle */}
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <NiftyChart />
+          <div className="mb-2 flex gap-2">
+            <button
+              onClick={() => setActiveChart("NIFTY")}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                activeChart === "NIFTY"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400"
+              }`}
+            >
+              NIFTY 50
+            </button>
+            <button
+              onClick={() => setActiveChart("SENSEX")}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                activeChart === "SENSEX"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400"
+              }`}
+            >
+              SENSEX
+            </button>
+          </div>
+          {activeChart === "NIFTY" ? (
+            <NiftyChart indexSymbol="NIFTY" indexName="NIFTY 50" />
+          ) : (
+            <NiftyChart indexSymbol="SENSEX" indexName="SENSEX" />
+          )}
         </div>
         <div>
           <SectorHeatmap />
         </div>
       </div>
 
+      {/* NSE & BSE Stock Tables side-by-side */}
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <StockTable exchange="NSE" />
+        <StockTable exchange="BSE" />
+      </div>
+
       <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <TopGainers />
-        <TopLosers />
-        <TrendingStocks />
+        <TopGainers
+          gainers={gainers}
+          isLoading={moversLoading}
+          onStockClick={setSelectedStock}
+        />
+        <TopLosers
+          losers={losers}
+          isLoading={moversLoading}
+          onStockClick={setSelectedStock}
+        />
+        <TrendingStocks
+          trending={trending}
+          isLoading={moversLoading}
+          onStockClick={setSelectedStock}
+        />
       </div>
 
       <div className="mt-6">
         <NewsPanel />
       </div>
+
+      {selectedStock && (
+        <StockDetailModal
+          stock={selectedStock}
+          chartData={getStockChartData(selectedStock.symbol)}
+          onClose={() => setSelectedStock(null)}
+        />
+      )}
     </div>
   );
 }

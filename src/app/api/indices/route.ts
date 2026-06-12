@@ -1,5 +1,5 @@
 import { getAllIndices } from "@/lib/services/marketDataService";
-import { isMarketOpen } from "@/lib/services/config";
+import { isMarketOpen, getMarketStatus } from "@/lib/services/config";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +11,7 @@ export async function GET() {
       source: "mixed",
       timestamp: Date.now(),
       isMarketOpen: isMarketOpen(),
+      marketStatus: getMarketStatus(),
     });
   } catch {
     return Response.json(
