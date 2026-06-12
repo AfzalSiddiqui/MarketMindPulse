@@ -9,7 +9,10 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Stock, ChartDataPoint } from "@/lib/types";
+import { Stock, ChartDataPoint, ChartTimeframe } from "@/lib/types";
+import { useStockChart } from "@/lib/hooks/useChartData";
+
+const TIMEFRAMES: ChartTimeframe[] = ["1D", "1W", "1M", "3M", "6M", "1Y"];
 
 interface StockDetailModalProps {
   stock: Stock;
@@ -19,11 +22,22 @@ interface StockDetailModalProps {
 
 export default function StockDetailModal({
   stock,
-  chartData,
+  chartData: initialChartData,
   onClose,
 }: StockDetailModalProps) {
   const isPositive = stock.change >= 0;
   const color = isPositive ? "#10b981" : "#ef4444";
+
+  const {
+    chartData: liveChartData,
+    isLoading,
+    timeframe,
+    setTimeframe,
+  } = useStockChart(stock.symbol, stock.exchange || "NSE");
+
+  // Use live data if available, otherwise fallback to initial
+  const displayData =
+    liveChartData.length > 0 ? liveChartData : initialChartData;
 
   return (
     <div
@@ -46,6 +60,11 @@ export default function StockDetailModal({
                 </h2>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">
                   {stock.name}
+                  {stock.exchange && (
+                    <span className="ml-2 rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                      {stock.exchange}
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
@@ -86,52 +105,81 @@ export default function StockDetailModal({
           </span>
         </div>
 
+        {/* Timeframe selector */}
+        <div className="mb-3 flex gap-1">
+          {TIMEFRAMES.map((tf) => (
+            <button
+              key={tf}
+              onClick={() => setTimeframe(tf)}
+              className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
+                timeframe === tf
+                  ? "bg-emerald-600 text-white"
+                  : "text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              }`}
+            >
+              {tf}
+            </button>
+          ))}
+        </div>
+
         <div className="mb-4 h-48">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData}>
-              <defs>
-                <linearGradient id="stockGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={color} stopOpacity={0.2} />
-                  <stop offset="95%" stopColor={color} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="#e4e4e7"
-                vertical={false}
-              />
-              <XAxis
-                dataKey="date"
-                tick={{ fontSize: 10, fill: "#a1a1aa" }}
-                axisLine={false}
-                tickLine={false}
-                interval={4}
-              />
-              <YAxis
-                domain={["dataMin - 5", "dataMax + 5"]}
-                tick={{ fontSize: 10, fill: "#a1a1aa" }}
-                axisLine={false}
-                tickLine={false}
-                width={60}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#18181b",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontSize: "12px",
-                  color: "#fafafa",
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="price"
-                stroke={color}
-                strokeWidth={2}
-                fill="url(#stockGrad)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          {isLoading && displayData.length === 0 ? (
+            <div className="flex h-full items-center justify-center">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={displayData}>
+                <defs>
+                  <linearGradient
+                    id="stockGrad"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop offset="5%" stopColor={color} stopOpacity={0.2} />
+                    <stop offset="95%" stopColor={color} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#e4e4e7"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 10, fill: "#a1a1aa" }}
+                  axisLine={false}
+                  tickLine={false}
+                  interval="preserveStartEnd"
+                />
+                <YAxis
+                  domain={["dataMin - 5", "dataMax + 5"]}
+                  tick={{ fontSize: 10, fill: "#a1a1aa" }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={60}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#18181b",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontSize: "12px",
+                    color: "#fafafa",
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="price"
+                  stroke={color}
+                  strokeWidth={2}
+                  fill="url(#stockGrad)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -175,7 +223,7 @@ export default function StockDetailModal({
 
         <div className="mt-3 flex items-center gap-2">
           <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
-            {stock.sector}
+            {stock.sector || "General"}
           </span>
         </div>
       </div>
