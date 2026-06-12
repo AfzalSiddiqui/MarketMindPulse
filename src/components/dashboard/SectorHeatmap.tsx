@@ -1,9 +1,11 @@
 "use client";
 
-import { sectorData } from "@/lib/mockData";
+import { useSectorData } from "@/lib/hooks/useSectorData";
 
 export default function SectorHeatmap() {
-  const maxAbsChange = Math.max(...sectorData.map((s) => Math.abs(s.change)));
+  const { sectors, isLoading } = useSectorData();
+
+  const maxAbsChange = Math.max(...sectors.map((s) => Math.abs(s.change)));
 
   function getColor(change: number): string {
     const intensity = Math.abs(change) / maxAbsChange;
@@ -15,13 +17,31 @@ export default function SectorHeatmap() {
     return `rgba(239, 68, 68, ${alpha})`;
   }
 
+  if (isLoading && sectors.length === 0) {
+    return (
+      <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+        <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+          Sector Performance
+        </h3>
+        <div className="grid grid-cols-2 gap-2">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-10 animate-pulse rounded-lg bg-zinc-100 dark:bg-zinc-800"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
       <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Sector Performance
       </h3>
       <div className="grid grid-cols-2 gap-2">
-        {sectorData.map((sector) => (
+        {sectors.map((sector) => (
           <div
             key={sector.name}
             className="flex items-center justify-between rounded-lg px-3 py-2"
