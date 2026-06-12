@@ -21,31 +21,31 @@ const MARKET_OPEN_MINUTE = 15;
 const MARKET_CLOSE_HOUR = 15;
 const MARKET_CLOSE_MINUTE = 30;
 
-// NSE/BSE holidays for 2026 (month is 0-indexed)
-const MARKET_HOLIDAYS_2026 = [
-  "2026-01-26", // Republic Day
-  "2026-02-17", // Mahashivratri (tentative)
-  "2026-03-10", // Holi
-  "2026-03-30", // Id-ul-Fitr (Eid)
-  "2026-03-31", // Id-ul-Fitr (Eid)
-  "2026-04-02", // Mahavir Jayanti
-  "2026-04-03", // Good Friday
-  "2026-04-14", // Dr. Ambedkar Jayanti
-  "2026-05-01", // Maharashtra Day
-  "2026-05-25", // Buddha Purnima
-  "2026-06-07", // Eid-ul-Adha (Bakrid)
-  "2026-07-06", // Muharram
-  "2026-08-15", // Independence Day
-  "2026-08-16", // Parsi New Year
-  "2026-09-04", // Milad-un-Nabi
-  "2026-10-02", // Gandhi Jayanti
-  "2026-10-20", // Dussehra
-  "2026-10-21", // Dussehra
-  "2026-11-09", // Diwali (Laxmi Puja)
-  "2026-11-10", // Diwali (Balipratipada)
-  "2026-11-19", // Guru Nanak Jayanti
-  "2026-12-25", // Christmas
-];
+// NSE/BSE holidays for 2026 — date → holiday name
+const MARKET_HOLIDAYS_2026: Record<string, string> = {
+  "2026-01-26": "Republic Day",
+  "2026-02-17": "Mahashivratri",
+  "2026-03-10": "Holi",
+  "2026-03-30": "Id-ul-Fitr (Eid)",
+  "2026-03-31": "Id-ul-Fitr (Eid)",
+  "2026-04-02": "Mahavir Jayanti",
+  "2026-04-03": "Good Friday",
+  "2026-04-14": "Dr. Ambedkar Jayanti",
+  "2026-05-01": "Maharashtra Day",
+  "2026-05-25": "Buddha Purnima",
+  "2026-06-07": "Eid-ul-Adha (Bakrid)",
+  "2026-07-06": "Muharram",
+  "2026-08-15": "Independence Day",
+  "2026-08-16": "Parsi New Year",
+  "2026-09-04": "Milad-un-Nabi",
+  "2026-10-02": "Gandhi Jayanti",
+  "2026-10-20": "Dussehra",
+  "2026-10-21": "Dussehra",
+  "2026-11-09": "Diwali (Laxmi Puja)",
+  "2026-11-10": "Diwali (Balipratipada)",
+  "2026-11-19": "Guru Nanak Jayanti",
+  "2026-12-25": "Christmas",
+};
 
 export type MarketStatus = "open" | "closed" | "holiday";
 
@@ -71,7 +71,7 @@ export function getMarketStatus(): MarketStatus {
   const { istDay, istHour, istMinute, dateStr } = getISTDate();
 
   // Holiday check
-  if (MARKET_HOLIDAYS_2026.includes(dateStr)) return "holiday";
+  if (dateStr in MARKET_HOLIDAYS_2026) return "holiday";
 
   // Weekend check
   if (istDay === 0 || istDay === 6) return "closed";
@@ -83,6 +83,11 @@ export function getMarketStatus(): MarketStatus {
   return currentMinutes >= openMinutes && currentMinutes <= closeMinutes
     ? "open"
     : "closed";
+}
+
+export function getHolidayName(): string | null {
+  const { dateStr } = getISTDate();
+  return MARKET_HOLIDAYS_2026[dateStr] || null;
 }
 
 export function isMarketOpen(): boolean {
