@@ -1,5 +1,5 @@
 import { getAllIndices } from "@/lib/services/marketDataService";
-import { isMarketOpen, getMarketStatus } from "@/lib/services/config";
+import { isMarketOpen, getMarketStatus, getHolidayName } from "@/lib/services/config";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +12,7 @@ export async function GET() {
       timestamp: Date.now(),
       isMarketOpen: isMarketOpen(),
       marketStatus: getMarketStatus(),
+      holidayName: getHolidayName(),
     });
   } catch {
     return Response.json(
