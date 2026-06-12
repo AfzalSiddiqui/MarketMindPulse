@@ -29,6 +29,7 @@ export const stocks: Stock[] = [
     sector: "Energy",
     dayHigh: 2968.0,
     dayLow: 2910.25,
+    exchange: "NSE",
   },
   {
     symbol: "TCS",
@@ -41,6 +42,7 @@ export const stocks: Stock[] = [
     sector: "IT",
     dayHigh: 4152.0,
     dayLow: 4070.0,
+    exchange: "NSE",
   },
   {
     symbol: "HDFCBANK",
@@ -53,6 +55,7 @@ export const stocks: Stock[] = [
     sector: "Banking",
     dayHigh: 1768.0,
     dayLow: 1735.5,
+    exchange: "NSE",
   },
   {
     symbol: "INFY",
@@ -65,6 +68,7 @@ export const stocks: Stock[] = [
     sector: "IT",
     dayHigh: 1892.0,
     dayLow: 1845.0,
+    exchange: "NSE",
   },
   {
     symbol: "ICICIBANK",
@@ -77,6 +81,7 @@ export const stocks: Stock[] = [
     sector: "Banking",
     dayHigh: 1298.0,
     dayLow: 1270.0,
+    exchange: "NSE",
   },
   {
     symbol: "HINDUNILVR",
@@ -89,6 +94,7 @@ export const stocks: Stock[] = [
     sector: "FMCG",
     dayHigh: 2580.0,
     dayLow: 2520.0,
+    exchange: "NSE",
   },
   {
     symbol: "BHARTIARTL",
@@ -101,6 +107,7 @@ export const stocks: Stock[] = [
     sector: "Telecom",
     dayHigh: 1660.0,
     dayLow: 1618.0,
+    exchange: "NSE",
   },
   {
     symbol: "SBIN",
@@ -113,6 +120,7 @@ export const stocks: Stock[] = [
     sector: "Banking",
     dayHigh: 845.0,
     dayLow: 828.0,
+    exchange: "NSE",
   },
   {
     symbol: "ITC",
@@ -125,6 +133,7 @@ export const stocks: Stock[] = [
     sector: "FMCG",
     dayHigh: 472.0,
     dayLow: 461.0,
+    exchange: "NSE",
   },
   {
     symbol: "KOTAKBANK",
@@ -137,6 +146,7 @@ export const stocks: Stock[] = [
     sector: "Banking",
     dayHigh: 1856.0,
     dayLow: 1815.0,
+    exchange: "NSE",
   },
   {
     symbol: "LT",
@@ -149,6 +159,7 @@ export const stocks: Stock[] = [
     sector: "Infrastructure",
     dayHigh: 3590.0,
     dayLow: 3510.0,
+    exchange: "NSE",
   },
   {
     symbol: "TATAMOTORS",
@@ -161,6 +172,7 @@ export const stocks: Stock[] = [
     sector: "Auto",
     dayHigh: 965.0,
     dayLow: 938.0,
+    exchange: "NSE",
   },
   {
     symbol: "AXISBANK",
@@ -173,6 +185,7 @@ export const stocks: Stock[] = [
     sector: "Banking",
     dayHigh: 1192.0,
     dayLow: 1160.0,
+    exchange: "NSE",
   },
   {
     symbol: "WIPRO",
@@ -185,6 +198,7 @@ export const stocks: Stock[] = [
     sector: "IT",
     dayHigh: 570.0,
     dayLow: 552.0,
+    exchange: "NSE",
   },
   {
     symbol: "MARUTI",
@@ -197,6 +211,7 @@ export const stocks: Stock[] = [
     sector: "Auto",
     dayHigh: 12520.0,
     dayLow: 12250.0,
+    exchange: "NSE",
   },
   {
     symbol: "SUNPHARMA",
@@ -209,6 +224,7 @@ export const stocks: Stock[] = [
     sector: "Pharma",
     dayHigh: 1752.0,
     dayLow: 1718.0,
+    exchange: "NSE",
   },
 ];
 
