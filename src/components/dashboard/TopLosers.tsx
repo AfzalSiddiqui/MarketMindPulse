@@ -1,18 +1,56 @@
 "use client";
 
-import { topLosers } from "@/lib/mockData";
+import { Stock } from "@/lib/types";
 
-export default function TopLosers() {
+interface TopLosersProps {
+  losers: Stock[];
+  isLoading: boolean;
+  onStockClick?: (stock: Stock) => void;
+}
+
+export default function TopLosers({
+  losers,
+  isLoading,
+  onStockClick,
+}: TopLosersProps) {
+  if (isLoading && losers.length === 0) {
+    return (
+      <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+        <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+          Top Losers
+        </h3>
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between px-2 py-1.5"
+            >
+              <div className="space-y-1.5">
+                <div className="h-3.5 w-16 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
+                <div className="h-2.5 w-28 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
+              </div>
+              <div className="space-y-1.5 text-right">
+                <div className="ml-auto h-3.5 w-14 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
+                <div className="ml-auto h-2.5 w-10 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
       <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Top Losers
       </h3>
       <div className="space-y-2">
-        {topLosers.map((stock) => (
+        {losers.map((stock) => (
           <div
             key={stock.symbol}
-            className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800"
+            onClick={() => onStockClick?.(stock)}
+            className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
             <div>
               <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
