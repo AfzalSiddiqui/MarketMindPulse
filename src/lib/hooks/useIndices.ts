@@ -11,6 +11,7 @@ interface UseIndicesResult {
   isLoading: boolean;
   isMarketOpen: boolean;
   marketStatus: MarketStatus;
+  holidayName: string | null;
 }
 
 export function useIndices(): UseIndicesResult {
@@ -18,6 +19,7 @@ export function useIndices(): UseIndicesResult {
   const [isLoading, setIsLoading] = useState(true);
   const [isMarketOpen, setIsMarketOpen] = useState(false);
   const [marketStatus, setMarketStatus] = useState<MarketStatus>("closed");
+  const [holidayName, setHolidayName] = useState<string | null>(null);
 
   const fetchIndices = useCallback(async () => {
     try {
@@ -29,6 +31,7 @@ export function useIndices(): UseIndicesResult {
       }
       setIsMarketOpen(json.isMarketOpen || false);
       setMarketStatus(json.marketStatus || (json.isMarketOpen ? "open" : "closed"));
+      setHolidayName(json.holidayName || null);
     } catch {
       // Keep current data on error
     } finally {
@@ -42,5 +45,5 @@ export function useIndices(): UseIndicesResult {
     return () => clearInterval(interval);
   }, [fetchIndices]);
 
-  return { indices, isLoading, isMarketOpen, marketStatus };
+  return { indices, isLoading, isMarketOpen, marketStatus, holidayName };
 }
