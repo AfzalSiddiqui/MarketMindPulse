@@ -16,7 +16,7 @@ import { Stock } from "@/lib/types";
 import { getStockChartData } from "@/lib/mockData";
 
 export default function Home() {
-  const { isMarketOpen, marketStatus } = useIndices();
+  const { isMarketOpen, marketStatus, holidayName } = useIndices();
   const {
     gainers,
     losers,
@@ -28,6 +28,34 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
+      {/* Holiday / Closed banner */}
+      {marketStatus === "holiday" && (
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-800 dark:bg-amber-950/60">
+          <span className="text-xl">&#128197;</span>
+          <div>
+            <p className="text-sm font-bold text-amber-800 dark:text-amber-300">
+              Market Closed Today — {holidayName}
+            </p>
+            <p className="text-xs text-amber-600 dark:text-amber-400">
+              NSE &amp; BSE are closed for the holiday. Trading resumes on the next working day.
+            </p>
+          </div>
+        </div>
+      )}
+      {marketStatus === "closed" && (
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-700 dark:bg-zinc-800/60">
+          <span className="text-xl">&#128340;</span>
+          <div>
+            <p className="text-sm font-bold text-zinc-700 dark:text-zinc-200">
+              Market Closed
+            </p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              NSE &amp; BSE trading hours: 9:15 AM – 3:30 PM IST, Mon–Fri.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
@@ -39,36 +67,26 @@ export default function Home() {
         </div>
         <div
           className={`flex items-center gap-2 rounded-lg px-3 py-1.5 ${
-            marketStatus === "open"
+            isMarketOpen
               ? "bg-emerald-50 dark:bg-emerald-950"
-              : marketStatus === "holiday"
-                ? "bg-amber-50 dark:bg-amber-950"
-                : "bg-zinc-100 dark:bg-zinc-800"
+              : "bg-zinc-100 dark:bg-zinc-800"
           }`}
         >
           <span
             className={`h-2.5 w-2.5 rounded-full ${
-              marketStatus === "open"
+              isMarketOpen
                 ? "animate-pulse bg-emerald-500"
-                : marketStatus === "holiday"
-                  ? "bg-amber-500"
-                  : "bg-zinc-400"
+                : "bg-zinc-400"
             }`}
           />
           <span
             className={`text-sm font-bold ${
-              marketStatus === "open"
+              isMarketOpen
                 ? "text-emerald-700 dark:text-emerald-400"
-                : marketStatus === "holiday"
-                  ? "text-amber-700 dark:text-amber-400"
-                  : "text-zinc-600 dark:text-zinc-400"
+                : "text-zinc-600 dark:text-zinc-400"
             }`}
           >
-            {marketStatus === "open"
-              ? "Market Open"
-              : marketStatus === "holiday"
-                ? "Market Holiday"
-                : "Market Closed"}
+            {isMarketOpen ? "Market Open" : "Market Closed"}
           </span>
         </div>
       </div>
